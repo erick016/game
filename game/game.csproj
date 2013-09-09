@@ -39,6 +39,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WindowsAzure.Storage.2.1.0.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy">
+      <HintPath>..\packages\Nancy.0.18.0\lib\net40\Nancy.dll</HintPath>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Aspnet">
+      <HintPath>..\packages\Nancy.Hosting.Aspnet.0.18.0\lib\net40\Nancy.Hosting.Aspnet.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -57,23 +81,28 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="angel.png" />
-    <Content Include="board.js" />
-    <Content Include="clouds.js" />
-    <Content Include="controls.js" />
+    <Content Include="img\angel.png" />
+    <Content Include="lib\requirejs-2.1.8\require.js" />
+    <Content Include="src\board.js" />
+    <Content Include="src\closeGrouping.js" />
+    <Content Include="src\clouds.js" />
+    <Content Include="src\controls.js" />
     <Content Include="css\bootstrap-responsive.css" />
     <Content Include="css\bootstrap-responsive.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\controls.css" />
     <Content Include="extended-controls.html" />
-    <Content Include="game.js" />
+    <Content Include="src\game.js" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="index.html" />
     <Content Include="lib\bootstrap\bootstrap.js" />
     <Content Include="lib\bootstrap\bootstrap.min.js" />
     <Content Include="lib\easeljs-0.6.0\easeljs-0.6.0.min.js" />
+    <Content Include="lib\jasmine-1.3.1\jasmine-html.js" />
+    <Content Include="lib\jasmine-1.3.1\jasmine.css" />
+    <Content Include="lib\jasmine-1.3.1\jasmine.js" />
     <Content Include="lib\jquery-1.10.1\jquery-1.10.1.js" />
     <Content Include="lib\jquery-1.10.1\jquery-1.10.1.min.js" />
     <Content Include="lib\Tangle-0.1.0\Tangle.js" />
@@ -83,17 +112,31 @@
     <Content Include="lib\Tangle-0.1.0\TangleKit\TangleKit.css" />
     <Content Include="lib\Tangle-0.1.0\TangleKit\TangleKit.js" />
     <Content Include="lib\Tangle-0.1.0\TangleTemplate.html" />
-    <Content Include="platforms.js" />
-    <Content Include="player.js" />
-    <Content Include="points.js" />
-    <Content Include="tangle-extensions.js" />
-    <Content Include="Web.config" />
+    <Content Include="src\histogramGrouping.js" />
+    <Content Include="src\platforms.js" />
+    <Content Include="src\player.js" />
+    <Content Include="src\points.js" />
+    <Content Include="SpecRunner.html" />
+    <Content Include="spec\DataCollectionSpec.js" />
+    <Content Include="spec\SpecHelper.js" />
+    <Content Include="src\data.js" />
+    <Content Include="src\randomGrouping.js" />
+    <Content Include="src\tangle-extensions.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modules\Bootstrapper.cs" />
+    <Compile Include="Modules\GameEvent.cs" />
+    <Compile Include="Modules\DefaultModule.cs" />
+    <Compile Include="Modules\TableReferencePool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\jquery-1.10.1\jquery-1.10.1.min.map" />
+    <Content Include="lib\jasmine-1.3.1\MIT.LICENSE" />
+    <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,177 @@
+/*jshint bitwise: false*/
+define(
+    ["closeGrouping", "data", "board", "histogramGrouping", "points", "randomGrouping"],
+    function (closeGrouping, data, board, histogramGrouping, points, randomGrouping) {
+        "use strict";
+        var Tangle = window.Tangle
+            , bounceFactors = [1 / 3, 1 / 2, 1, 2, 3, 4]
+            , createPlatform
+            , defaultBounce = 17
+            , factor = 2
+            , groupWith
+            , position = 0;
+        var self = [];
+
+        createPlatform = function (x, y, type) {
+            var platform = { width: 70, height: 20 };
+            platform.isMoving = ~~(Math.random() * 2);
+            platform.direction = ~~(Math.random() * 2) ? -1 : 1;
+            platform.x = ~~x;
+            platform.y = y;
+            platform.type = type;
+            platform.firstColor = type === 1 ? '#AADD00' : '#FF8C00';
+            platform.secondColor = type === 1 ? '#698B22' : '#EEEE00';
+
+            platform.onCollide = function (hero) {
+                hero.fallStop();
+                var index = factor;
+                if (type === 1) {
+                    index++;
+                }
+                hero.jump(defaultBounce * bounceFactors[index]);
+            };
+            return platform;
+        };
+
+        self.bounce = function (bounce) {
+            if (/metal/i.test(bounce)) {
+                factor = 0;
+            } else if (/wood/i.test(bounce)) {
+                factor = 1;
+            } else if (/rubber/i.test(bounce)) {
+                factor = 3;
+            }
+            else if (/flubber/i.test(bounce)) {
+                factor = 4;
+            } else {
+                factor = 2;
+            }
+
+            data.collectDataAsync("Platforms", "Bounce", bounce);
+        };
+
+        self.reset = function () {
+            position = 0;
+            for (var j = 0; j < self.count; j++) {
+                self[j] = createPlatform(
+                    0,
+                    position,
+                    ~~(Math.random() * 5) === 0 ? 1 : 0);
+                self[j].x = Math.random() * (board.width - self[j].width);
+
+                if (position < board.height - self[j].height) {
+                    position += ~~(board.height / self.count);
+                }
+            }
+        };
+
+        self.draw = function () {
+            var ctx = board.context();
+            for (var i = 0; i < this.count; i++) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                var gradient = ctx.createRadialGradient(
+                    this[i].x + (this[i].width / 2),
+                    this[i].y + (this[i].height / 2),
+                    5,
+                    this[i].x + (this[i].width / 2),
+                    this[i].y + (this[i].height / 2),
+                    45);
+                gradient.addColorStop(0, this[i].firstColor);
+                gradient.addColorStop(1, this[i].secondColor);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(
+                    this[i].x,
+                    this[i].y,
+                    this[i].width,
+                    this[i].height);
+            }
+        };
+
+        self.grouping = function (algorithm) {
+            if (this.groupingAlgorithm !== algorithm) {
+                data.collectDataAsync("Platforms", "Grouping", algorithm);
+                this.groupingAlgorithm = algorithm;
+                this.changeGrouping();
+            }
+        };
+
+        self.changeGrouping = function () {
+            switch (this.groupingAlgorithm) {
+                case "anywhere":
+                    groupWith = randomGrouping;
+                    break;
+                case "slightly-shifted":
+                    groupWith = closeGrouping;
+                    break;
+                case "mostly-centered":
+                    groupWith = histogramGrouping.centered;
+                    break;
+                case "mostly-on-left":
+                    groupWith = histogramGrouping.left;
+                    break;
+                case "mostly-on-right":
+                    groupWith = histogramGrouping.right;
+                    break;
+                case "mostly-on-left&right":
+                    groupWith = histogramGrouping.bimodal;
+                    break;
+                default:
+                    groupWith = randomGrouping;
+            }
+        };
+
+        self.move = function (canMove) {
+            if (this.canMove !== canMove) {
+                data.collectDataAsync("Platforms", "CanMove", canMove);
+            }
+            this.canMove = canMove;
+        };
+
+        self.update = function (deltaY) {
+            if (this.count !== this.length) {
+                data.collectDataAsync("Platforms", "Count", this.count);
+                while (this.count !== this.length) {
+                    this.pop();
+                }
+                this.reset();
+            }
+
+            for (var i = 0; i < this.count; i++) {
+                if (this[i].isMoving && this.canMove) {
+                    if (this[i].x < 0) {
+                        this[i].direction = 1;
+                    } else if (this[i].x > board.width - this[i].width) {
+                        this[i].direction = -1;
+                    }
+                    this[i].x += this[i].direction * (i / 2) * ~~(points.value / 100);
+                }
+
+                this[i].y += deltaY;
+
+                if (this[i].y > board.height) {
+                    this[i] = createPlatform(
+                        groupWith.generateX(board.width, this[i]),
+
+                        this[i].y - board.height,
+                        ~~(Math.random() * 5) === 0 ? 1 : 0);
+                }
+            }
+        };
+
+        self.plt = new Tangle($('#platforms')[0], {
+            initialize: function () {
+                this.platformsBounce = "canvas";
+                this.platformsCount = 7;
+                this.platformsMove = false;
+                this.platformsGrouping = "mostly-centered";
+            },
+            update: function () {
+                self.bounce(this.platformsBounce);
+                self.count = this.platformsCount;
+                self.move(this.platformsMove);
+                self.grouping(this.platformsGrouping);
+            }
+        });
+        self.reset();
+        return self;
+    });
