@@ -1,8 +1,12 @@
 ﻿/*jshint bitwise: false*/
 define(function () {
     "use strict";
+    var Hashes = window.Hashes;
+
     var g = (function () {
-        var self = {};
+        var self = {
+            addSettingsTo: function () { }
+        };
 
         var setSessionCookie = function (name, value) {
             var cookie = name + "=" + value;
@@ -64,6 +68,19 @@ define(function () {
             $.post("/Collect", result);
 
             return result;
+        };
+
+        self.saveSettingsAsync = function ($settings) {
+            var entity = {}
+                , algorithm = new Hashes.SHA256()
+                , data = JSON.stringify($settings);
+
+            entity.rowKey = algorithm.hex(data);
+            entity.settings = data;
+
+            $.post("/Store", entity);
+
+            return entity;
         };
 
         return self;

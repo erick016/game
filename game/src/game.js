@@ -1,13 +1,14 @@
-﻿require(
-    ["data", "board", "clouds", "controls", "platforms", "player", "points"],
-    function (data, board, clouds, controls, platforms, player, points) {
+﻿define(
+    ["easeljs", "data", "board", "clouds", "controls", "platforms", "player", "points"],
+    function (createjs, data, board, clouds, controls, platforms, player, points) {
         "use strict";
-        var checkCollisions
-            , createjs = window.createjs
+        var args = Array.prototype.slice.call(arguments)
+            , checkCollisions
             , drawAllPieces
             , endGame
             , gameLoop
             , toggleGameLoop
+            , self = { gamepieces: args.slice(1) }
             , updateEachPiece
             , updatePieces
             , updateView;
@@ -24,12 +25,17 @@
 
         checkCollisions = function ($player, $platforms) {
             for (var i = 0; i < $platforms.count; i++) {
+                var platform = $platforms[i];
+                if (!platform) {
+                    continue;
+                }
+
                 if ($player.isFalling &&
-                    $player.X < $platforms[i].x + $platforms[i].width &&
-                    $player.X + $player.width > $platforms[i].x &&
-                    $player.Y + $player.height > $platforms[i].y &&
-                    $player.Y + $player.height < $platforms[i].y + $platforms[i].height) {
-                    $platforms[i].onCollide($player);
+                    $player.X < platform.x + platform.width &&
+                    $player.X + $player.width > platform.x &&
+                    $player.Y + $player.height > platform.y &&
+                    $player.Y + $player.height < platform.y + platform.height) {
+                    platform.onCollide($player);
                 }
             }
         };
@@ -75,7 +81,7 @@
             );
         };
 
-        (function (u) {
+        self.start = (function (u) {
             var halt, resume, startGame;
             createjs.Ticker.setFPS(60);
             createjs.Ticker.useRAF = true;
@@ -96,7 +102,7 @@
                 toggleGameLoop = resume;
             };
 
-            resume();
+            return resume;
         })(function () { gameLoop(); });
 
         endGame = function () {
@@ -131,4 +137,16 @@
                 arguments[i].reset();
             }
         }
+
+        self.getSettings = function () {
+            var l = this.gamepieces.length
+            , settings = {};
+
+            for (var i = 0; i < l; i++) {
+                this.gamepieces[i].addSettingsTo(settings);
+            }
+            return settings;
+        };
+
+        return self;
     });

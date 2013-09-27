@@ -6,26 +6,15 @@
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="lib/Tangle-0.1.0/TangleKit/TangleKit.css" rel="stylesheet" />
     <link href="css/controls.css" rel="stylesheet" />
-    <script src="lib/easeljs-0.6.0/easeljs-0.6.0.min.js"> </script>
-    <script src="lib/Tangle-0.1.0/Tangle.js"> </script>
-    <script src="lib/Tangle-0.1.0/TangleKit/TangleKit.js"> </script>
-    <script src="lib/Tangle-0.1.0/TangleKit/mootools.js"> </script>
-    <script src="lib/Tangle-0.1.0/TangleKit/BVTouchable.js"> </script>
-    <script src="lib/jquery-1.10.1/jquery-1.10.1.min.js"> </script>
-    <script src="lib/bootstrap/bootstrap.js"> </script>
-    <script src="src/tangle-extensions.js"> </script>
-    <script type="text/javascript">
 
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-42181966-1']);
-        _gaq.push(['_trackPageview']);
+    <script src="lib/jshashes/hashes.min.js"></script>
+    <script src="lib/Tangle-0.1.0/Tangle.js"></script>
+    <script src="lib/Tangle-0.1.0/TangleKit/TangleKit.js"></script>
+    <script src="lib/Tangle-0.1.0/TangleKit/mootools.js"></script>
+    <script src="lib/Tangle-0.1.0/TangleKit/BVTouchable.js"></script>
+    <script src="src/tangle-extensions.js"></script>
 
-        (function () {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
+    <script data-main="src/runner.js" src="lib/requirejs-2.1.8/require.js"></script>
 </head>
 <body>
     <div class="span12 row-fluid" style="margin-left: 0">
@@ -48,12 +37,8 @@
                     <span>never move</span>
                     <span>can move when the score is high enough</span>
                 </span>.
-
-                <!--New platforms appear <span data-var="platformsGrouping" class="TKToggle TKSwitch">
-                                         <span>anywhere</span><span>near their old locations</span>
-                                     .-->
                 New platforms appear <span data-var="platformsGrouping" data-values="anywhere slightly-shifted mostly-centered mostly-on-left mostly-on-right mostly-on-left&amp;right" class="DragText"></span>.
-                </span>
+            </span>
             <div id="controls">
                 To play the game:
 
@@ -66,7 +51,5 @@
             </div>
         </div>
     </div>
-
-    <script data-main="src/game.js" src="lib/requirejs-2.1.8/require.js"></script>
 </body>
 </html>

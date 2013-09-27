@@ -1,7 +1,7 @@
 /*jshint bitwise: false*/
 define(
-    ["closeGrouping", "data", "board", "histogramGrouping", "points", "randomGrouping"],
-    function (closeGrouping, data, board, histogramGrouping, points, randomGrouping) {
+    ["data", "board", "points", "groups"],
+    function (data, board, points, groups) {
         "use strict";
         var Tangle = window.Tangle
             , bounceFactors = [1 / 3, 1 / 2, 1, 2, 3, 4]
@@ -11,6 +11,8 @@ define(
             , groupWith
             , position = 0;
         var self = [];
+        self.count = 7;
+        self.canMove = false;
 
         createPlatform = function (x, y, type) {
             var platform = { width: 70, height: 20 };
@@ -91,32 +93,28 @@ define(
             if (this.groupingAlgorithm !== algorithm) {
                 data.collectDataAsync("Platforms", "Grouping", algorithm);
                 this.groupingAlgorithm = algorithm;
-                this.changeGrouping();
-            }
-        };
-
-        self.changeGrouping = function () {
-            switch (this.groupingAlgorithm) {
-                case "anywhere":
-                    groupWith = randomGrouping;
-                    break;
-                case "slightly-shifted":
-                    groupWith = closeGrouping;
-                    break;
-                case "mostly-centered":
-                    groupWith = histogramGrouping.centered;
-                    break;
-                case "mostly-on-left":
-                    groupWith = histogramGrouping.left;
-                    break;
-                case "mostly-on-right":
-                    groupWith = histogramGrouping.right;
-                    break;
-                case "mostly-on-left&right":
-                    groupWith = histogramGrouping.bimodal;
-                    break;
-                default:
-                    groupWith = randomGrouping;
+                switch (this.groupingAlgorithm) {
+                    case "anywhere":
+                        groupWith = groups.random;
+                        break;
+                    case "slightly-shifted":
+                        groupWith = groups.close;
+                        break;
+                    case "mostly-centered":
+                        groupWith = groups.histogram.centered;
+                        break;
+                    case "mostly-on-left":
+                        groupWith = groups.histogram.left;
+                        break;
+                    case "mostly-on-right":
+                        groupWith = groups.histogram.right;
+                        break;
+                    case "mostly-on-left&right":
+                        groupWith = groups.histogram.bimodal;
+                        break;
+                    default:
+                        groupWith = groups.random;
+                }
             }
         };
 
@@ -130,7 +128,7 @@ define(
         self.update = function (deltaY) {
             if (this.count !== this.length) {
                 data.collectDataAsync("Platforms", "Count", this.count);
-                while (this.count !== this.length) {
+                while (this.count < this.length) {
                     this.pop();
                 }
                 this.reset();
@@ -158,20 +156,37 @@ define(
             }
         };
 
-        self.plt = new Tangle($('#platforms')[0], {
-            initialize: function () {
-                this.platformsBounce = "canvas";
-                this.platformsCount = 7;
-                this.platformsMove = false;
-                this.platformsGrouping = "mostly-centered";
-            },
-            update: function () {
-                self.bounce(this.platformsBounce);
-                self.count = this.platformsCount;
-                self.move(this.platformsMove);
-                self.grouping(this.platformsGrouping);
+        self.plt = (function () {
+            var t = null, e = $('#platforms')[0];
+            if (e) {
+                t = new Tangle(e, {
+                    initialize: function () {
+                        this.platformsBounce = "canvas";
+                        this.platformsCount = 7;
+                        this.platformsMove = false;
+                        this.platformsGrouping = "mostly-centered";
+                    },
+                    update: function () {
+                        self.bounce(this.platformsBounce);
+                        self.count = this.platformsCount;
+                        self.move(this.platformsMove);
+                        self.grouping(this.platformsGrouping);
+                    }
+                });
             }
-        });
+            return t;
+        })();
+
+        self.addSettingsTo = function (target) {
+            target.platforms = {
+                bounce: factor,
+                count: this.count,
+                move: this.canMove,
+                grouping: this.groupingAlgorithm
+            };
+            return target;
+        };
+
         self.reset();
         return self;
     });
