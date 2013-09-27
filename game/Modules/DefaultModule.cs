@@ -14,13 +14,12 @@ namespace Game.Modules
     using Nancy;
     using Nancy.ModelBinding;
 
+    // ReSharper disable UnusedMember.Global
+
     /// <summary>
     /// Hosts the server side code.
     /// </summary>
-    // ReSharper disable UnusedMember.Global
     public class DefaultModule : NancyModule
-
-    // ReSharper restore UnusedMember.Global
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultModule"/> class.
@@ -29,15 +28,20 @@ namespace Game.Modules
         {
             this.Get["/"] = _ => this.View["index"];
             this.Get["/SpecRunner"] = _ => this.View["SpecRunner"];
-            this.Post["/Collect"] = delegate
+            this.Post["/Collect"] = arg =>
                 {
                     Task.Factory.StartNew(() => this.Save());
+                    return HttpStatusCode.OK;
+                };
+            this.Post["/Store"] = arg =>
+                {
+                    Task.Factory.StartNew(() => this.SaveSettings());
                     return HttpStatusCode.OK;
                 };
         }
 
         /// <summary>
-        /// Saves to.
+        /// Saves the event.
         /// </summary>
         /// <returns>
         /// Status 200 if the task completes without error.
@@ -46,12 +50,42 @@ namespace Game.Modules
         {
             var dataPoint = this.Bind<GameEvent>();
             var operation = TableOperation.Insert(dataPoint);
-            using (var r = TableReferencePool.Pool.Acquire())
+            using (var r = TableReferencePool.Pool.Acquire("GameEvents"))
             {
-                r.CloudTable.Execute(operation);
+                var tableResult = r.CloudTable.Execute(operation);
+                return tableResult.HttpStatusCode;
             }
-
-            return HttpStatusCode.OK;
         }
+
+        /// <summary>
+        /// Saves the settings.
+        /// </summary>
+        /// <returns>Always OK</returns>
+        private Response SaveSettings()
+        {
+            var settings = this.Bind<GameSettings>();
+            var getExisting = TableOperation.Retrieve<GameSettings>(settings.PartitionKey, settings.RowKey);
+            var insertNew = TableOperation.Insert(settings);
+            using (var r = TableReferencePool.Pool.Acquire("GameSettings"))
+            {
+                var result = r.CloudTable.Execute(getExisting);
+                var existing = (GameSettings)result.Result;
+                TableResult tableResult;
+                if (existing == null)
+                {
+                    tableResult = r.CloudTable.Execute(insertNew);
+                }
+                else
+                {
+                    existing.StoreCount++;
+                    var replace = TableOperation.Replace(existing);
+                    tableResult = r.CloudTable.Execute(replace);
+                }
+
+                return tableResult.HttpStatusCode;
+            }
+        }
+
+        // ReSharper restore UnusedMember.Global
     }
 }

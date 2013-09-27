@@ -1,7 +1,11 @@
 ﻿define(["board", "data", "player"], function (board, data, player) {
     "use strict";
 
-    var Tangle = window.Tangle, controls, controlSystem = {};
+    var Tangle = window.Tangle
+        , controls
+        , controlSystem = {
+            addSettingsTo: function () { }
+        };
 
     controls = {
         left: function () { player.moveLeft(board); },
@@ -116,15 +120,22 @@
         return self;
     }
 
-    controlSystem.ct = new Tangle($("#controls")[0], {
-        initialize: function () {
-            this.controlType = true;
-        },
-        update: function () {
-            this.controlInstructions = this.controlType;
-            controlSystem.toggleControls(this.controlType, player, board.canvas());
+    controlSystem.ct = (function () {
+        var t = null, e = $("#controls")[0];
+        if (e) {
+            t = new Tangle(e, {
+                initialize: function () {
+                    this.controlType = true;
+                },
+                update: function () {
+                    this.controlInstructions = this.controlType;
+                    controlSystem.toggleControls(this.controlType, player, board.canvas());
+                }
+            });
         }
-    });
+        return t;
+    }
+)();
 
     return controlSystem;
 });
