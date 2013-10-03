@@ -106,8 +106,8 @@
                 toggleGameLoop = resume;
             };
 
-            if (bufferloader.loaded) return resume;
-            else return halt;
+            /*if (bufferloader.loaded)*/ return resume;
+            /*else return halt;*/
         })(function () { gameLoop(); });
 
         endGame = function () {
