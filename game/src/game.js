@@ -1,6 +1,6 @@
 ﻿define(
-    ["easeljs", "data", "board", "clouds", "controls", "platforms", "player", "points"],
-    function (createjs, data, board, clouds, controls, platforms, player, points) {
+    ["easeljs", "data", "board", "clouds", "controls", "platforms", "player", "points","bufferloader"],
+    function (createjs, data, board, clouds, controls, platforms, player, points, bufferloader) {
         "use strict";
         var args = Array.prototype.slice.call(arguments)
             , checkCollisions
@@ -12,6 +12,9 @@
             , updateEachPiece
             , updatePieces
             , updateView;
+
+        bufferloader.fullLoad();
+        
 
         controls.control.togglePlay = function () {
             toggleGameLoop();
@@ -36,6 +39,7 @@
                     $player.Y + $player.height > platform.y &&
                     $player.Y + $player.height < platform.y + platform.height) {
                     platform.onCollide($player);
+                    bufferloader.play();
                 }
             }
         };
@@ -102,7 +106,8 @@
                 toggleGameLoop = resume;
             };
 
-            return resume;
+            if (bufferloader.loaded) return resume;
+            else return halt;
         })(function () { gameLoop(); });
 
         endGame = function () {

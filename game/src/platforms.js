@@ -31,6 +31,7 @@ define(
                     index++;
                 }
                 hero.jump(defaultBounce * bounceFactors[index]);
+
             };
             return platform;
         };
