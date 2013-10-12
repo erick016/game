@@ -1,20 +1,36 @@
 ﻿define(
-    ["easeljs", "data", "board", "clouds", "controls", "platforms", "player", "points","bufferloader"],
-    function (createjs, data, board, clouds, controls, platforms, player, points, bufferloader) {
+    ["jquery", "easeljs", "data", "board", "clouds", "controls",
+        "platforms", "player", "points","bufferloader"],
+    function ($, createjs, data, board, clouds, controls, platforms, player, points,bufferloader) {
         "use strict";
-        var args = Array.prototype.slice.call(arguments)
-            , checkCollisions
-            , drawAllPieces
-            , endGame
-            , gameLoop
-            , toggleGameLoop
-            , self = { gamepieces: args.slice(1) }
-            , updateEachPiece
-            , updatePieces
-            , updateView;
+        var args = Array.prototype.slice.call(arguments),
+            checkCollisions,
+            drawAllPieces,
+            endGame,
+            gameLoop,
+            toggleGameLoop,
+            self = { gamePieces: args.slice(2) },
+            settingKey = $(location).attr('pathname').substring(1),
+            share,
+            updateEachPiece,
+            updatePieces,
+            updateView;
 
         bufferloader.fullLoad();
-        
+
+        self.applySettings = function ($settings) {
+            var i, l = this.gamePieces.length, source = JSON.parse($settings);
+            for (i = 0; i < l; i = i + 1) {
+                this.gamePieces[i].applySettings(source);
+            }
+        };
+
+        if (settingKey) {
+            data.collectDataAsync("Game", "Settings", settingKey);
+            data.loadSettingsAsync(settingKey, self);
+        } else {
+            data.collectDataAsync("Game", "Settings", "Default");
+        }
 
         controls.control.togglePlay = function () {
             toggleGameLoop();
@@ -26,30 +42,26 @@
             }
         };
 
-        checkCollisions = function ($player, $platforms) {
+        checkCollisions = function ($player, $platforms,$bufferloader) {
             for (var i = 0; i < $platforms.count; i++) {
                 var platform = $platforms[i];
                 if (!platform) {
                     continue;
                 }
 
-                if ($player.isFalling &&
-                    $player.X < platform.x + platform.width &&
-                    $player.X + $player.width > platform.x &&
-                    $player.Y + $player.height > platform.y &&
-                    $player.Y + $player.height < platform.y + platform.height) {
+                if ($player.isFalling
+                    && $player.X < platform.x + platform.width
+                    && $player.X + $player.width > platform.x
+                    && $player.Y + $player.height > platform.y
+                    && $player.Y + $player.height < platform.y
+                    + platform.height) {
                     platform.onCollide($player);
-                    bufferloader.play();
+                    $bufferloader.play();
                 }
             }
         };
 
-        updateEachPiece = function (
-            $clouds
-          , $platforms
-          , $player
-          , $points
-        ) {
+        updateEachPiece = function ($clouds, $platforms, $player, $points) {
             var speed;
 
             checkCollisions($player, $platforms);
@@ -70,19 +82,8 @@
         updateView = drawAllPieces;
 
         gameLoop = function () {
-            updatePieces(
-            clouds
-            , platforms
-            , player
-            , points
-            );
-            updateView(
-                board
-                , clouds
-                , platforms
-                , player
-                , points
-            );
+            updatePieces(clouds, platforms, player, points);
+            updateView(board, clouds, platforms, player, points);
         };
 
         self.start = (function (u) {
@@ -106,9 +107,10 @@
                 toggleGameLoop = resume;
             };
 
-            /*if (bufferloader.loaded)*/ return resume;
-            /*else return halt;*/
-        })(function () { gameLoop(); });
+            return resume;
+        })(function () {
+            gameLoop();
+        });
 
         endGame = function () {
             var ctx = board.context(), tp = controls.control.togglePlay;
@@ -128,8 +130,10 @@
                 board.draw();
                 ctx.fillStyle = "Black";
                 ctx.font = "10pt Arial";
-                ctx.fillText("GAME OVER", (board.width / 2) - 60, (board.height / 2) - 50);
-                ctx.fillText("YOUR RESULT:" + points.value, board.width / 2 - 60, board.height / 2 - 30);
+                ctx.fillText("GAME OVER", (board.width / 2) - 60,
+                    (board.height / 2) - 50);
+                ctx.fillText("YOUR RESULT:" + points.value,
+                    board.width / 2 - 60, board.height / 2 - 30);
             };
 
             toggleGameLoop();
@@ -144,14 +148,34 @@
         }
 
         self.getSettings = function () {
-            var l = this.gamepieces.length
-            , settings = {};
+            var l = this.gamePieces.length, settings = {};
 
             for (var i = 0; i < l; i++) {
-                this.gamepieces[i].addSettingsTo(settings);
+                this.gamePieces[i].addSettingsTo(settings);
             }
             return settings;
         };
+
+        share = function () {
+            var entity, link, settings = self.getSettings();
+            entity = data.saveSettingsAsync(settings);
+
+            link = $("<a/>", {
+                href: "/" + entity.rowKey,
+                id: "shareLink",
+                "class": "btn btn-success",
+            });
+            link.text(link.prop("href"));
+            $("#shareLink").remove();
+            $("#shareKey").removeClass("hidden")
+                .append(link);
+
+            data.getShortLink(link);
+        };
+
+        $(function () {
+            $("#share").click(share);
+        });
 
         return self;
     });

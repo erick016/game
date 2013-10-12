@@ -1,11 +1,16 @@
 ﻿/*jshint bitwise: false*/
-define(function () {
-    "use strict";
-    var Hashes = window.Hashes;
 
-    var g = (function () {
+define(["jquery", "jshashes"], function ($, Hashes) {
+    "use strict";
+    var self, Sha256 = Hashes.SHA256,
+        linkCache = {};
+
+    self = (function () {
         var self = {
-            addSettingsTo: function () { }
+            addSettingsTo: function () {
+            },
+            applySettings: function () {
+            }
         };
 
         var setSessionCookie = function (name, value) {
@@ -72,7 +77,7 @@ define(function () {
 
         self.saveSettingsAsync = function ($settings) {
             var entity = {}
-                , algorithm = new Hashes.SHA256()
+                , algorithm = new Sha256()
                 , data = JSON.stringify($settings);
 
             entity.rowKey = algorithm.hex(data);
@@ -86,5 +91,47 @@ define(function () {
         return self;
     })();
 
-    return g;
+    self.loadSettingsAsync = function ($settingsKey, $game) {
+        $.get("/Load", { rowKey: $settingsKey }, function (entity) {
+            $game.applySettings(entity.Settings);
+        }, "json");
+    };
+
+    function setLink(link, shortLink) {
+        link.attr("href", shortLink);
+        link.text(shortLink);
+    }
+
+    self.getShortLink = function (link) {
+        var url = link.prop("href");
+        var shortLink = linkCache[url];
+        if (shortLink) {
+            setLink(link, shortLink);
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCUMpx7pyxDl8bL9IeiPw828ta1nokffJ8",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ longUrl: url }),
+            success: function (data) {
+                if (!linkCache[url]) {
+                    linkCache[url] = data.id;
+                    setLink(link, data.id);
+                }
+            }
+        });
+
+        var encoded = encodeURIComponent(url);
+        $.get("https://api-ssl.bitly.com/v3/shorten?access_token=51534937372eb9dcc4636ee9c69a197d88bf2694&longUrl=" + encoded,
+            function (response) {
+                if (!linkCache[url] && response.status_code === 200) {
+                    linkCache[url] = response.data.url;
+                    setLink(link, response.data.url);
+                }
+            }
+        );
+    };
+    return self;
 });

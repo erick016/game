@@ -3,15 +3,22 @@ define(
     ["data", "board", "points", "groups"],
     function (data, board, points, groups) {
         "use strict";
-        var Tangle = window.Tangle
-            , bounceFactors = [1 / 3, 1 / 2, 1, 2, 3, 4]
-            , createPlatform
-            , defaultBounce = 17
-            , factor = 2
-            , groupWith
-            , position = 0;
+        var Tangle = window.Tangle,
+            bounceFactors = [1 / 3, 1 / 2, 1, 2, 3, 4],
+            createPlatform,
+            defaultBounce = 17,
+            factor = 2,
+            groupWith,
+            position = 0,
+            settings = {
+                bounce: "canvas",
+                platformsCount: 7,
+                move: false,
+                grouping: "mostly-centered"
+            };
+
         var self = [];
-        self.count = 7;
+        self.count = settings.platformsCount;
         self.canMove = false;
 
         createPlatform = function (x, y, type) {
@@ -31,7 +38,6 @@ define(
                     index++;
                 }
                 hero.jump(defaultBounce * bounceFactors[index]);
-
             };
             return platform;
         };
@@ -51,6 +57,7 @@ define(
             }
 
             data.collectDataAsync("Platforms", "Bounce", bounce);
+            settings.bounce = bounce;
         };
 
         self.reset = function () {
@@ -93,6 +100,7 @@ define(
         self.grouping = function (algorithm) {
             if (this.groupingAlgorithm !== algorithm) {
                 data.collectDataAsync("Platforms", "Grouping", algorithm);
+                settings.grouping = algorithm;
                 this.groupingAlgorithm = algorithm;
                 switch (this.groupingAlgorithm) {
                     case "anywhere":
@@ -122,19 +130,12 @@ define(
         self.move = function (canMove) {
             if (this.canMove !== canMove) {
                 data.collectDataAsync("Platforms", "CanMove", canMove);
+                settings.move = canMove;
             }
             this.canMove = canMove;
         };
 
         self.update = function (deltaY) {
-            if (this.count !== this.length) {
-                data.collectDataAsync("Platforms", "Count", this.count);
-                while (this.count < this.length) {
-                    this.pop();
-                }
-                this.reset();
-            }
-
             for (var i = 0; i < this.count; i++) {
                 if (this[i].isMoving && this.canMove) {
                     if (this[i].x < 0) {
@@ -157,7 +158,19 @@ define(
             }
         };
 
-        self.plt = (function () {
+        self.resize = function (size) {
+            if (size !== this.length) {
+                data.collectDataAsync("Platforms", "Count", size);
+                settings.platformsCount = size;
+                this.count = size;
+                while (this.count < this.length) {
+                    this.pop();
+                }
+                this.reset();
+            }
+        };
+
+        self.tangle = (function () {
             var t = null, e = $('#platforms')[0];
             if (e) {
                 t = new Tangle(e, {
@@ -169,7 +182,7 @@ define(
                     },
                     update: function () {
                         self.bounce(this.platformsBounce);
-                        self.count = this.platformsCount;
+                        self.resize(this.platformsCount);
                         self.move(this.platformsMove);
                         self.grouping(this.platformsGrouping);
                     }
@@ -179,13 +192,29 @@ define(
         })();
 
         self.addSettingsTo = function (target) {
-            target.platforms = {
-                bounce: factor,
-                count: this.count,
-                move: this.canMove,
-                grouping: this.groupingAlgorithm
-            };
+            target.platforms = settings;
             return target;
+        };
+
+        self.applySettings = function ($settings) {
+            var platformSettings = $settings.platforms;
+            if (platformSettings) {
+                if (platformSettings.bounce) {
+                    self.tangle.setValue("platformsBounce", platformSettings.bounce);
+                }
+
+                if (platformSettings.platformsCount) {
+                    self.tangle.setValue("platformsCount", platformSettings.platformsCount);
+                }
+
+                if (platformSettings.move) {
+                    self.tangle.setValue("platformsMove", platformSettings.move);
+                }
+
+                if (platformSettings.grouping) {
+                    self.tangle.setValue("platformsGrouping", platformSettings.grouping);
+                }
+            }
         };
 
         self.reset();
