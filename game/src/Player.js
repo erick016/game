@@ -1,5 +1,5 @@
 ﻿/*jshint bitwise: false*/
-define(["board", "data"], function (board, data) {
+define(["jquery","board", "data"], function ($,board, data) {
     "use strict";
     var Tangle = window.Tangle,
         defaultSpeed = 5,
