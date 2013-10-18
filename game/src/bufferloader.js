@@ -59,6 +59,8 @@ define(function () {
 
         self.fullLoad = function () {
 
+            console.log("Hello World");
+
             init();
 
             function init() {
