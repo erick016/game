@@ -42,7 +42,7 @@
             }
         };
 
-        checkCollisions = function ($player, $platforms,$bufferloader) {
+        checkCollisions = function ($player, $platforms,bufferloader) {
             for (var i = 0; i < $platforms.count; i++) {
                 var platform = $platforms[i];
                 if (!platform) {
@@ -56,7 +56,7 @@
                     && $player.Y + $player.height < platform.y
                     + platform.height) {
                     platform.onCollide($player);
-                    //$bufferloader.play();
+                    bufferloader.play();
                 }
             }
         };
@@ -95,7 +95,7 @@
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
                 
-                $bufferloader.fullLoad();
+                bufferloader.fullLoad();
             };
 
             resume = function () {
