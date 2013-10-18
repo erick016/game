@@ -1,4 +1,4 @@
-﻿define(["board", "data", "player"], function (board, data, player) {
+﻿define(["jquery","board", "data", "player"], function ($,board, data, player) {
     "use strict";
 
     var Tangle = window.Tangle
