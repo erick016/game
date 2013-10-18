@@ -16,7 +16,6 @@
             updatePieces,
             updateView;
 
-        bufferloader.fullLoad();
 
         self.applySettings = function ($settings) {
             var i, l = this.gamePieces.length, source = JSON.parse($settings);
@@ -34,6 +33,7 @@
 
         controls.control.togglePlay = function () {
             toggleGameLoop();
+
         };
 
         player.checkEndGame = function () {
@@ -94,6 +94,8 @@
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
+                console.log("carp");
+                $bufferloader.fullLoad();
             };
 
             resume = function () {
