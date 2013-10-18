@@ -94,8 +94,8 @@
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
-                console.log("carp");
-                //$bufferloader.fullLoad();
+                
+                $bufferloader.fullLoad();
             };
 
             resume = function () {
