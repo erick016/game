@@ -56,7 +56,7 @@
                     && $player.Y + $player.height < platform.y
                     + platform.height) {
                     platform.onCollide($player);
-                    $bufferloader.play();
+                    //$bufferloader.play();
                 }
             }
         };
@@ -68,7 +68,7 @@
             speed = $player.update();
             $clouds.update(speed * 0.5);
             $platforms.update(speed);
-            $points.update($player, $player.jumpSpeed);
+            //$points.update($player, $player.jumpSpeed);
         };
 
         updatePieces = updateEachPiece;
@@ -95,7 +95,7 @@
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
                 console.log("carp");
-                $bufferloader.fullLoad();
+                //$bufferloader.fullLoad();
             };
 
             resume = function () {
