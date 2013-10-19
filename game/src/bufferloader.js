@@ -71,7 +71,7 @@ define(function () {
                 bufferLoader = new BufferLoader(
                   context,
                   [
-                    '../sounds/bounce3.wav'
+                    'bounce3.wav'
                   ],
                   finishedLoading
                   );

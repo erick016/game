@@ -1,7 +1,7 @@
 ﻿define(
     ["jquery", "easeljs", "data", "board", "clouds", "controls",
         "platforms", "player", "points","bufferloader"],
-    function ($, createjs, data, board, clouds, controls, platforms, player, points,bufferloader) {
+    function ($, createjs, data, board, clouds, controls, platforms, player, points, bufferloader) {
         "use strict";
         var args = Array.prototype.slice.call(arguments),
             checkCollisions,
@@ -15,7 +15,6 @@
             updateEachPiece,
             updatePieces,
             updateView;
-
 
         self.applySettings = function ($settings) {
             var i, l = this.gamePieces.length, source = JSON.parse($settings);
@@ -33,7 +32,6 @@
 
         controls.control.togglePlay = function () {
             toggleGameLoop();
-
         };
 
         player.checkEndGame = function () {
@@ -42,7 +40,7 @@
             }
         };
 
-        checkCollisions = function ($player, $platforms,bufferloader) {
+        checkCollisions = function ($player, $platforms) {
             for (var i = 0; i < $platforms.count; i++) {
                 var platform = $platforms[i];
                 if (!platform) {
@@ -68,7 +66,7 @@
             speed = $player.update();
             $clouds.update(speed * 0.5);
             $platforms.update(speed);
-            //$points.update($player, $player.jumpSpeed);
+            $points.update($player, $player.jumpSpeed);
         };
 
         updatePieces = updateEachPiece;
@@ -94,7 +92,6 @@
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
-                
                 bufferloader.fullLoad();
             };
 

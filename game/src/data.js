@@ -105,7 +105,7 @@ define(["jquery", "jshashes"], function ($, Hashes) {
     self.getShortLink = function (link) {
         var url = link.prop("href");
         var shortLink = linkCache[url];
-        if (shortLink) {
+        if(shortLink){
             setLink(link, shortLink);
             return;
         }
@@ -114,9 +114,10 @@ define(["jquery", "jshashes"], function ($, Hashes) {
             type: "POST",
             url: "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCUMpx7pyxDl8bL9IeiPw828ta1nokffJ8",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ longUrl: url }),
-            success: function (data) {
-                if (!linkCache[url]) {
+            data: JSON.stringify({longUrl: url}),
+            success: function(data){
+                if(!linkCache[url])
+                {
                     linkCache[url] = data.id;
                     setLink(link, data.id);
                 }
@@ -125,13 +126,14 @@ define(["jquery", "jshashes"], function ($, Hashes) {
 
         var encoded = encodeURIComponent(url);
         $.get("https://api-ssl.bitly.com/v3/shorten?access_token=51534937372eb9dcc4636ee9c69a197d88bf2694&longUrl=" + encoded,
-            function (response) {
-                if (!linkCache[url] && response.status_code === 200) {
+            function(response){
+                if(!linkCache[url] && response.status_code === 200)
+                {
                     linkCache[url] = response.data.url;
                     setLink(link, response.data.url);
                 }
             }
-        );
+        );  
     };
     return self;
 });
