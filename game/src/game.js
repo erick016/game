@@ -54,6 +54,8 @@
                     && $player.Y + $player.height < platform.y
                     + platform.height) {
                     platform.onCollide($player);
+                    bounceSound.currentTime = 0;
+                    bounceSound.play();
                 }
             }
         };
@@ -91,6 +93,8 @@
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
+                var bounceSound = document.querySelector("#bounceSound");
+                bounceSound.load();
             };
 
             resume = function () {
