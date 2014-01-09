@@ -84,10 +84,12 @@
     <Content Include="img\angel.png" />
     <Content Include="lib\jshashes\hashes.min.js" />
     <Content Include="lib\requirejs-2.1.8\require.js" />
+    <Content Include="sounds\bounce2.wav" />
     <Content Include="sounds\bounce3.wav" />
     <Content Include="spec\gameSpec.js" />
     <Content Include="spec\specRunner.js" />
     <Content Include="src\board.js" />
+    <Content Include="src\bufferloader.js" />
     <Content Include="src\grouping\bimodal.js" />
     <Content Include="src\grouping\centered.js" />
     <Content Include="src\grouping\close.js" />

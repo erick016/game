@@ -1,16 +1,24 @@
 ﻿/*jshint bitwise: false*/
 define(["jquery","board", "data"], function ($,board, data) {
     "use strict";
+<<<<<<< HEAD
     //var goingLeft;
     //var goingRight;
+=======
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
     var Tangle = window.Tangle,
         defaultSpeed = 5,
         factor,
         self = new Image(),
         speed,
+<<<<<<< HEAD
         settings = { playerAgility: "normally", gravityLevel: "normal" };
 
     self.vspeed = 0;
+=======
+        settings = { playerAgility: "normally" };
+
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
     self.frames = 1;
     self.height = 95;
     self.src = "img/angel.png";
@@ -31,6 +39,7 @@ define(["jquery","board", "data"], function ($,board, data) {
         speed = defaultSpeed * factor;
         data.collectDataAsync("Player", "Agility", agility);
         settings.playerAgility = agility;
+<<<<<<< HEAD
     };
 
     self.gravity = function (gravity) {
@@ -44,6 +53,8 @@ define(["jquery","board", "data"], function ($,board, data) {
         }
 
         settings.gravityLevel = factor;
+=======
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
     };
 
     self.checkEndGame = function () {
@@ -120,6 +131,7 @@ define(["jquery","board", "data"], function ($,board, data) {
         return t;
     })();
 
+<<<<<<< HEAD
     self.gt = (function () {
         var e = $('#gravity')[0], t = null;
         if (e) {
@@ -135,6 +147,8 @@ define(["jquery","board", "data"], function ($,board, data) {
         return t;
     })();
 
+=======
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
     self.addSettingsTo = function (target) {
         target.player = settings;
         return target;
@@ -145,9 +159,12 @@ define(["jquery","board", "data"], function ($,board, data) {
         if (playerSettings && playerSettings.playerAgility) {
             self.pt.setValue("playerAgility", playerSettings.playerAgility);
         }
+<<<<<<< HEAD
         if (playerSettings && playerSettings.gravityLevel) {
             self.gt.setValue("gravityLevel", playerSettings.gravityLevel);
         }
+=======
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
     };
 
     self.reset = function () {

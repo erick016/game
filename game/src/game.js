@@ -1,7 +1,12 @@
 ﻿define(
     ["jquery", "easeljs", "data", "board", "clouds", "controls",
+<<<<<<< HEAD
         "platforms", "player", "points"],
     function ($, createjs, data, board, clouds, controls, platforms, player, points) {
+=======
+        "platforms", "player", "points","bufferloader"],
+    function ($, createjs, data, board, clouds, controls, platforms, player, points, bufferloader) {
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
         "use strict";
         var args = Array.prototype.slice.call(arguments),
             checkCollisions,
@@ -54,8 +59,12 @@
                     && $player.Y + $player.height < platform.y
                     + platform.height) {
                     platform.onCollide($player);
+<<<<<<< HEAD
                     //bounceSound.currentTime = 0;
                     bounceSound.play();
+=======
+                    bufferloader.play();
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
                 }
             }
         };
@@ -94,8 +103,12 @@
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");
                 createjs.Ticker.addEventListener("tick", u);
+<<<<<<< HEAD
                 var bounceSound = document.querySelector("#bounceSound");
                 bounceSound.load();
+=======
+                bufferloader.fullLoad();
+>>>>>>> a1f26a58bccface25cb8a6bb4ab66fc22a262131
             };
 
             resume = function () {

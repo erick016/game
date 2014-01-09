@@ -36,6 +36,9 @@ namespace Game.Modules
                 Nancy.Conventions.StaticContentConventionBuilder.AddDirectory("/src"));
             nancyConventions.StaticContentsConventions.Add(
                 Nancy.Conventions.StaticContentConventionBuilder.AddDirectory("/spec"));
+            nancyConventions.StaticContentsConventions.Add(
+                Nancy.Conventions.StaticContentConventionBuilder.AddDirectory("/sounds"));
+
         }
     }
 
