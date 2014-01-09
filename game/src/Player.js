@@ -1,13 +1,16 @@
 ﻿/*jshint bitwise: false*/
-define(["board", "data"], function (board, data) {
+define(["jquery","board", "data"], function ($,board, data) {
     "use strict";
+    //var goingLeft;
+    //var goingRight;
     var Tangle = window.Tangle,
         defaultSpeed = 5,
         factor,
         self = new Image(),
         speed,
-        settings = { playerAgility: "normally" };
+        settings = { playerAgility: "normally", gravityLevel: "normal" };
 
+    self.vspeed = 0;
     self.frames = 1;
     self.height = 95;
     self.src = "img/angel.png";
@@ -28,6 +31,19 @@ define(["board", "data"], function (board, data) {
         speed = defaultSpeed * factor;
         data.collectDataAsync("Player", "Agility", agility);
         settings.playerAgility = agility;
+    };
+
+    self.gravity = function (gravity) {
+        if (/weak/i.test(gravity)) {
+            factor = 1 / 3;
+        }
+        else if (/strong/i.test(gravity)) {
+            factor = 1;
+        } else {
+            factor = 2/3;
+        }
+
+        settings.gravityLevel = factor;
     };
 
     self.checkEndGame = function () {
@@ -104,6 +120,21 @@ define(["board", "data"], function (board, data) {
         return t;
     })();
 
+    self.gt = (function () {
+        var e = $('#gravity')[0], t = null;
+        if (e) {
+            t = new Tangle(e, {
+                initialize: function () {
+                    this.gravityLevel = "normal";
+                },
+                update: function () {
+                    self.gravity(this.gravityLevel);
+                }
+            });
+        }
+        return t;
+    })();
+
     self.addSettingsTo = function (target) {
         target.player = settings;
         return target;
@@ -113,6 +144,9 @@ define(["board", "data"], function (board, data) {
         var playerSettings = $settings.player;
         if (playerSettings && playerSettings.playerAgility) {
             self.pt.setValue("playerAgility", playerSettings.playerAgility);
+        }
+        if (playerSettings && playerSettings.gravityLevel) {
+            self.gt.setValue("gravityLevel", playerSettings.gravityLevel);
         }
     };
 
@@ -129,9 +163,13 @@ define(["board", "data"], function (board, data) {
 
     self.update = function () {
         var remainder = 0;
+
+        this.moveTo(this.X + self.vspeed, this.Y)
+
         if (this.isJumping) {
             if (this.Y > board.height * 0.4) {
                 this.moveTo(this.X, this.Y - this.jumpSpeed);
+              
             } else {
                 remainder = this.jumpSpeed;
             }
@@ -146,8 +184,9 @@ define(["board", "data"], function (board, data) {
 
         if (this.isFalling) {
             if (this.Y < board.height - this.height) {
-                this.moveTo(this.X, this.Y + this.fallSpeed);
-                this.fallSpeed++;
+                 this.moveTo(this.X, this.Y + this.fallSpeed);
+              
+                this.fallSpeed += settings.gravityLevel;
             } else {
                 this.checkEndGame();
                 this.fallStop();
@@ -157,6 +196,7 @@ define(["board", "data"], function (board, data) {
         return remainder;
     };
 
+
     self.reset();
     return self;
-});
+})

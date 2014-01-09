@@ -54,7 +54,7 @@
                     && $player.Y + $player.height < platform.y
                     + platform.height) {
                     platform.onCollide($player);
-                    bounceSound.currentTime = 0;
+                    //bounceSound.currentTime = 0;
                     bounceSound.play();
                 }
             }
@@ -89,6 +89,7 @@
             var halt, resume, startGame;
             createjs.Ticker.setFPS(60);
             createjs.Ticker.useRAF = true;
+            //bounceSound.currentTime = 0;
 
             startGame = function () {
                 data.collectDataAsync("Game", "Play", "Start");

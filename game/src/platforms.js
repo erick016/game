@@ -1,7 +1,7 @@
 /*jshint bitwise: false*/
 define(
-    ["data", "board", "points", "groups"],
-    function (data, board, points, groups) {
+    ["jquery","data", "board", "points", "groups"],
+    function ($,data, board, points, groups) {
         "use strict";
         var Tangle = window.Tangle,
             bounceFactors = [1 / 3, 1 / 2, 1, 2, 3, 4],

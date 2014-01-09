@@ -21,11 +21,12 @@
     </div>
 
     <audio id="bounceSound">
-        <source src="sounds/bounce3.wav" type="audio/mpeg">
-        <!--<source src="../sounds/hamburger.ogg" type="audio/ogg" loop>-->
+        <source src="sounds/bounce3.wav " type="audio/mpeg">
+        
     </audio>
-
+    
     <div class="row-fluid">
+     
         <div class="span8" style="padding: 1%">
 
             <span id="board">The board is <span id="boardSize" data-var="boardSize" data-values="small medium huge" class="DragText"></span>.
@@ -33,6 +34,10 @@
 
             <span id="player">The angel flies <span data-var="playerAgility" data-values="slowly normally quickly"
                 class="DragText"></span>.
+            </span>
+
+            <span id= "gravity"> Gravity is <span data-var="gravityLevel" data-values="weak normal strong"
+                       class="DragText"> </span>.
             </span>
 
             <span id="platforms">The platforms are made of <span data-var="platformsBounce" data-values="metal wood canvas rubber flubber"
@@ -43,6 +48,37 @@
                 </span>.
                 New platforms appear <span data-var="platformsGrouping" data-values="anywhere slightly-shifted mostly-centered mostly-on-left mostly-on-right mostly-on-left&amp;right" class="DragText"></span>.
             </span>
+            <div id="controls">
+                <p>
+                    I want to use the <span data-var="controlType" class="TKToggle TKSwitch">
+                        <span>keyboard</span>
+                        <span>mouse</span>
+                    </span> to control the angel.
+                </p>
+                <div data-var="controlInstructions" class="TKSwitch">
+                    <div>
+                        <p>
+                            To use the keyboard:
+                        </p>
+                        <ul>
+                            <li>-> moves the angel to the right.</li>
+                            <li>&lt;- moves the angel to the left.</li>
+                            <li>Spacebar to pause or resume the game.</li>
+                            <li>Spacebar to restart after game over.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        To use the mouse:
+
+                        <ul>
+                            <li>The angel will follow the mouse pointer to the left or right.</li>
+                            <li>The angel jumps automatically when she lands on a platform.</li>
+                            <li>Spacebar to pause or resume the game.</li>
+                            <li>Spacebar to restart after game over.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row-fluid" style="margin-left: 20px">

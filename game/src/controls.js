@@ -1,4 +1,4 @@
-﻿define(["board", "data", "player"], function (board, data, player) {
+﻿define(["jquery","board", "data", "player"], function ($,board, data, player) {
     "use strict";
 
     var Tangle = window.Tangle
@@ -15,6 +15,7 @@
         },
         teardown: function () {
         }
+
     };
 
     controlSystem.toggleControls = (function () {
@@ -65,18 +66,43 @@
             var key = event.keyCode;
 
             if (key === leftArrow) {
-                self.left();
+                //self.left();
+                player.vspeed = -5;
+                event.preventDefault();
             } else if (key === rightArrow) {
-                self.right();
+                //self.right();
+                player.vspeed = 5;
+                event.preventDefault();
             } else if (key === spaceBar) {
                 self.togglePlay();
+                event.preventDefault();
             }
         };
 
         document.addEventListener('keydown', listener);
 
+        var releaseListener = function (event) {
+            var key = event.keyCode;
+
+            if (key === leftArrow) {
+                //self.left();
+                player.vspeed = 0;
+                event.preventDefault();
+            } else if (key === rightArrow) {
+                //self.right();
+                player.vspeed = 0;
+                event.preventDefault();
+            } else if (key === spaceBar) {
+                self.togglePlay();
+                event.preventDefault();
+            }
+        };
+
+        document.addEventListener('keyup', releaseListener);
+
         self.teardown = function () {
             document.removeEventListener('keydown', listener);
+            player.vspeed = 0;
         };
 
         return self;
@@ -107,6 +133,7 @@
 
             if (key === spaceBar) {
                 self.togglePlay();
+                event.preventDefault();
             }
         };
 
@@ -126,7 +153,7 @@
         if (e) {
             t = new Tangle(e, {
                 initialize: function () {
-                    this.controlType = true;
+                    this.controlType = false;
                 },
                 update: function () {
                     this.controlInstructions = this.controlType;
