@@ -3,9 +3,6 @@
         "platforms", "player", "points"],
     function ($, createjs, data, board, clouds, controls, platforms, player, points) {
 
-        "platforms", "player", "points","bufferloader"],
-    function ($, createjs, data, board, clouds, controls, platforms, player, points, bufferloader) {
-
         "use strict";
         var args = Array.prototype.slice.call(arguments),
             checkCollisions,
