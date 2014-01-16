@@ -62,17 +62,32 @@ define(
 
         self.reset = function () {
             position = 0;
+
+            var oldX = -4;
+            var oldY = -4;
+
             for (var j = 0; j < self.count; j++) {
+                
+                oldX = -4;
+                oldY = -4;
+
+                if (j < this.length) { oldX = self[j].x; oldY = self[j].y; }
+
                 self[j] = createPlatform(
                     0,
                     position,
                     ~~(Math.random() * 5) === 0 ? 1 : 0);
-                self[j].x = Math.random() * (board.width - self[j].width);
+
+                if (oldX != -4) { self[j].x = oldX; }
+
+                else
+                { self[j].x = Math.random() * (board.width - self[j].width); }
 
                 if (position < board.height - self[j].height) {
                     position += ~~(board.height / self.count);
                 }
             }
+
         };
 
         self.draw = function () {
